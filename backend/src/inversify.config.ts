@@ -1,0 +1,21 @@
+import { Container } from "inversify";
+import { TYPES } from "./inversify.types";
+import { App } from "./app";
+import { Controller } from "./lib/controller";
+import { UsersController } from "./users/users.controller";
+import { FormsController } from "./forms/forms.controller";
+import { IUsersService } from "./users/users.service.interface";
+import { UsersService } from "./users/users.service";
+import { IFormsService } from "./forms/forms.service.interface";
+import { FormsService } from "./forms/forms.service";
+
+
+const container = new Container();
+
+container.bind(TYPES.App).to(App).inSingletonScope();
+container.bind<Controller>(TYPES.UsersController).to(UsersController).inSingletonScope();
+container.bind<IUsersService>(TYPES.UsersService).to(UsersService).inSingletonScope();
+container.bind<Controller>(TYPES.FormsController).to(FormsController).inSingletonScope();
+container.bind<IFormsService>(TYPES.FormsService).to(FormsService).inSingletonScope();
+
+export { container };

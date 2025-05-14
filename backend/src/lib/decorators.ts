@@ -12,7 +12,7 @@ export function route(method: HttpMethod, path: string): MethodDecorator {
             [...existingRoutes, { method, path, handler: propKey as string, middlewares }],
             target.constructor
         );
-    }
+    };
 }
 
 export function get(path: string): MethodDecorator {
@@ -40,5 +40,5 @@ export function use(...mws: (RequestHandler | Middleware)[]): MethodDecorator {
         const newHandlers = mws.map(mw => typeof mw === "function" ? mw : mw.execute.bind(mw));
 
         Reflect.defineMetadata(MIDDLEWARES, [...existingMiddlewares, newHandlers], target, propKey);
-    }
+    };
 }

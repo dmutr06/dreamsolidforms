@@ -1,8 +1,11 @@
-import express, { Router } from "express";
+import express, { NextFunction, Request, Response, Router } from "express";
+import cookieParser from "cookie-parser";
 import { inject, injectable } from "inversify";
 import { TYPES } from "./inversify.types";
 import { Controller } from "./lib/controller";
 import path from "path";
+import { AuthMiddleware } from "./common/auth.middleware";
+import { HttpError } from "./common/httpError";
 
 @injectable()
 export class App {
@@ -10,16 +13,18 @@ export class App {
 
     constructor(
         @inject(TYPES.UsersController) private usersController: Controller,
-        @inject(TYPES.FormsController) private formsController: Controller) 
-    {}
+        @inject(TYPES.FormsController) private formsController: Controller
+    ) {}
 
     private useStatic() {
-        this.app.use("/", express.static(path.join(__dirname, "..", "public"))); 
-        this.app.use("*$", (_, res) => res.sendFile(path.join(__dirname, "..", "public", "index.html")));
+        this.app.get("/", express.static(path.join(__dirname, "..", "public"))); 
+        this.app.get("*$", (_, res) => res.sendFile(path.join(__dirname, "..", "public", "index.html")));
     }
 
     private useMiddlewares() {
+        this.app.use(cookieParser());
         this.app.use(express.json());
+        this.app.use(new AuthMiddleware().execute);
     }
 
     private useRoutes() {
@@ -34,6 +39,16 @@ export class App {
         this.useMiddlewares();
         this.useRoutes();
         this.useStatic();
+
+        this.app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+            if (!err) return;
+            if (err instanceof HttpError) {
+                res.status(err.code).send({ statusCode: err.code, message: err.message });
+            } else {
+                console.log(err);
+                res.status(500).send({ statusCode: 500, message: "Internal server error :(" });
+            }
+        });
 
         this.app.listen(6969, () => {
             console.log(`Server has been started on port ${port}`);

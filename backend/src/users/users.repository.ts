@@ -17,7 +17,20 @@ export class UsersRepository {
         return res[0];
     }
 
-    public async createUser(user: CreateUserDto): Promise<boolean> {
-        return await this.db.run("INSERT INTO users (id, name, password) VALUES (?, ?, ?)", [createId(), user.name, user.password]);
+    public async createUser(userDto: CreateUserDto): Promise<User | null> {
+        const user: User = { ...userDto, id: createId() };
+
+        if (await this.db.run("INSERT INTO users (id, name, password) VALUES (?, ?, ?)", [user.id, user.name, user.password]))
+            return user;
+        else 
+            return null;
+    }
+
+    public async getUserByName(name: String): Promise<User | null> {
+        const res = await this.db.query<User>("SELECT * FROM users WHERE name = ?", [name]);
+
+        if (!res || res.length == 0) return null;
+
+        return res[0];
     }
 }

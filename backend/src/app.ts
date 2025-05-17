@@ -35,7 +35,7 @@ export class App {
         this.useRoutes();
         this.useStatic();
 
-        this.app.listen(port, () => {
+        this.app.listen(6969, () => {
             console.log(`Server has been started on port ${port}`);
         });
     }

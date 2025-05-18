@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
 import initDb from "better-sqlite3";
 import { Database } from "./database.interface";
+import { HttpError } from "../common/httpError";
 
 
 @injectable()
@@ -12,14 +13,14 @@ export class SqliteDatabase implements Database {
         this.db.pragma("journal_mode = WAL");
     }
 
-    async query<T = unknown>(sql: string, params: unknown[] = []): Promise<T[] | null> {
+    async query<T = unknown>(sql: string, params: unknown[] = []): Promise<T[]> {
         if (!this.db) await this.connect();
 
         try {
             return this.db.prepare(sql).all(params) as T[]; 
         } catch (e) {
             console.log(e);
-            return null;
+            throw new HttpError(500, "Internal server error");
         }
     }
 
@@ -30,6 +31,7 @@ export class SqliteDatabase implements Database {
             this.db.prepare(sql).run(params);
             return true;
         } catch (e) {
+            console.log(e);
             return false;
         }
     }

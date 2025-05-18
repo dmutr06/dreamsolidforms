@@ -42,10 +42,12 @@ export class App {
 
         this.app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
             if (!err) return;
+
             if (err instanceof HttpError) {
                 res.status(err.code).send({ statusCode: err.code, message: err.message });
+            } else if (err instanceof SyntaxError) {
+                res.status(400).send({ statusCode: 400, message: "Bad json" });
             } else {
-                console.log(err);
                 res.status(500).send({ statusCode: 500, message: "Internal server error :(" });
             }
         });

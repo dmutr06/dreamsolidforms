@@ -1,0 +1,5 @@
+CREATE TABLE users (
+    id TEXT PRIMARY KEY,
+    name UNIQUE TEXT NOT NULL,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);

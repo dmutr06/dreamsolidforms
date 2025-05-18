@@ -5,6 +5,7 @@ export const TYPES = {
     UsersRepository: Symbol.for("UsersRepository"),
     FormsController: Symbol.for("FormsController"),
     FormsService: Symbol.for("FormsService"),
+    FormsRepository: Symbol.for("FormsRepository"),
     PrismaService: Symbol.for("PrismaService"),
     Database: Symbol.for("Database"),
 };

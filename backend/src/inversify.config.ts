@@ -11,6 +11,7 @@ import { FormsService } from "./forms/forms.service";
 import { Database } from "./database/database.interface";
 import { SqliteDatabase } from "./database/sqliteDb";
 import { UsersRepository } from "./users/users.repository";
+import { FormsRepository } from "./forms/forms.repository";
 
 const container = new Container();
 
@@ -21,5 +22,6 @@ container.bind<Controller>(TYPES.FormsController).to(FormsController).inSingleto
 container.bind<IFormsService>(TYPES.FormsService).to(FormsService).inSingletonScope();
 container.bind<Database>(TYPES.Database).to(SqliteDatabase).inSingletonScope();
 container.bind<UsersRepository>(TYPES.UsersRepository).to(UsersRepository).inSingletonScope();
+container.bind<FormsRepository>(TYPES.FormsRepository).to(FormsRepository).inSingletonScope();
 
 export { container };

@@ -8,6 +8,7 @@ import { AuthedRequest, TypedRequest } from "../common/customRequest";
 import { AuthGuard } from "../common/auth.guard";
 import { ValidateMiddlleware } from "../common/validate.middleware";
 import { CreateUserDto } from "./dto/createUser.dto";
+import { HttpError } from "../common/httpError";
 
 @injectable()
 export class UsersController extends Controller {
@@ -54,6 +55,8 @@ export class UsersController extends Controller {
     
         const user = await this.usersService.getUserById(id);
 
-        res.send({ user });
+        if (!user) throw new HttpError(401, "Unathorized");
+
+        res.json({ id: user.id, name: user.name });
     }
 }

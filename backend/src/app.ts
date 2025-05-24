@@ -17,7 +17,7 @@ export class App {
     ) {}
 
     private useStatic() {
-        this.app.get("/", express.static(path.join(__dirname, "..", "public"))); 
+        this.app.use(express.static(path.join(__dirname, "..", "public"))); 
         this.app.get("*$", (_, res) => res.sendFile(path.join(__dirname, "..", "public", "index.html")));
     }
 
@@ -33,6 +33,7 @@ export class App {
         router.use("/forms", this.formsController.buildRouter());
 
         this.app.use("/api", router);
+        this.app.all("/api/*$", () => { throw new HttpError(404, "Not Found") });
     }
 
     public async run(port: number) {

@@ -2,7 +2,11 @@
     "scripts": {
         "build:frontend": "cd frontend && npm run build",
         "build:backend": "cd backend && npm run build",
-        "build": "npm run build:frontend && rm -rf backend/public && cp -r frontend/dist backend/public && npm run build:backend",
+        "build": "npm run build:frontend && rimraf backend/public && cpy frontend/dist/** backend/public --parents && npm run build:backend",
         "start": "cd backend && npm start"
+    },
+    "devDependencies": {
+        "cpy-cli": "^5.0.0",
+        "rimraf": "^6.0.1"
     }
 }

@@ -8,6 +8,11 @@ import { CreateFormDto } from "./dto/createForm.dto";
 import { createId } from "@paralleldrive/cuid2";
 import { CreateChoiceQuestion, CreateNumberQuestion, CreateTextQuestion } from "./dto/createQuestion.dto";
 import { QuestionRow } from "./questions/questionRow.interface";
+import { ChoiceAnswer, NumberAnswer, TextAnswer } from "./dto/createAnswer.dto";
+import { CreateSubmissionDto } from "./dto/createSubmission.dto";
+import { GetSubmissionDto } from "./dto/getSubmission.dto";
+import { Answer } from "./submissions/answer.interface";
+import { GetBaseAnswerDto } from "./dto/getBaseAnswer.dto";
 
 @injectable()
 export class FormsRepository {
@@ -80,14 +85,12 @@ export class FormsRepository {
             [formId, form.userId, form.title, form.description]
         ))) throw new HttpError(400, "Bad request");
         
-        for (const q of form.questions) {
+        for (const [idx, q] of form.questions.entries()) {
             const questionId = createId();
             await this.db.run(
                 "INSERT INTO questions (id, form_id, label, type, required, order_index) VALUES (?, ?, ?, ?, ?, ?)",
-                [questionId, formId, q.label, q.type, Number(q.required), q.order || null]
+                [questionId, formId, q.label, q.type, Number(q.required), idx]
             );
-
-            console.log(q);
 
             switch (q.type) {
                 case "choice": {
@@ -119,5 +122,106 @@ export class FormsRepository {
         }
 
         return true;
+    }
+
+    public async createSubmission(submission: CreateSubmissionDto & { userId: string }): Promise<boolean> {
+    const submissionId = createId();
+
+    const ok = await this.db.run(
+        "INSERT INTO submissions (id, form_id, user_id) VALUES (?, ?, ?)",
+        [submissionId, submission.formId, submission.userId]
+    );
+        
+    if (!ok) throw new HttpError(400, "Failed to create submission");
+
+    for (const answer of submission.answers) {
+        const answerId = createId();
+
+        await this.db.run(
+            "INSERT INTO answers (id, submission_id, question_id, type) VALUES (?, ?, ?, ?)",
+            [answerId, submissionId, answer.questionId, answer.type]
+        );
+
+        switch (answer.type) {
+            case "choice": {
+                const info = answer.info as ChoiceAnswer;
+                await this.db.run(
+                    "INSERT INTO choice_answers (id, answer_id, value) VALUES (?, ?, ?)",
+                    [createId(), answerId, info.value]
+                );
+                break;
+            }
+            case "text": {
+                const info = answer.info as TextAnswer;
+                await this.db.run(
+                    "INSERT INTO text_answers (id, answer_id, value) VALUES (?, ?, ?)",
+                    [createId(), answerId, info.value]
+                );
+                break;
+            }
+            case "number": {
+                const info = answer.info as NumberAnswer;
+                await this.db.run(
+                    "INSERT INTO number_answers (id, answer_id, value) VALUES (?, ?, ?)",
+                    [createId(), answerId, info.value]
+                );
+                break;
+            }
+            default:
+                throw new HttpError(400, `Unsupported answer type: ${answer.type}`);
+        }
+    }
+
+    return true;
+}
+
+    async getSubmission(submissionId: string): Promise<GetSubmissionDto> {
+        const rawSubmission = await this.db.query<{ form_id: string }>(
+            "SELECT form_id FROM submissions WHERE id = ?",
+            [submissionId]
+        )
+
+        if (rawSubmission.length == 0) throw new HttpError(404, "Submission not found");
+
+        const formId = rawSubmission[0].form_id;
+
+        const rawAnswers = await this.db.query<GetBaseAnswerDto>(
+            `SELECT id, question_id, type FROM answers WHERE submission_id = ?`,
+            [submissionId]
+        );
+
+        const answers: Answer[] = [];
+        for (const answer of rawAnswers) {
+            let value: any = null;
+
+            switch (answer.type) {
+                case "choice":
+                    value = await this.db.query<{ value: number }>(`SELECT value FROM choice_answers WHERE answer_id = ?`, [answer.id]);
+                    if (value.length == 0) throw new HttpError(404, "Not Found");
+                    value = value[0].value;
+                    break;
+                case "text":
+                    value = await this.db.query<{ value: string }>(`SELECT value FROM text_answers WHERE answer_id = ?`, [answer.id]);
+                    if (value.length == 0) throw new HttpError(404, "Not Found");
+                    value = value[0].value;
+                    break;
+                case "number":
+                    value = await this.db.query(`SELECT value FROM number_answers WHERE answer_id = ?`, [answer.id]);
+                    if (value.length == 0) throw new HttpError(404, "Not Found");
+                    value = value[0].value;
+                    break;
+                default:
+                    throw new HttpError(404, "Not Found");
+            }
+
+            answers.push({
+                id: answer.id,
+                questionId: answer.question_id,
+                type: answer.type,
+                value
+            });
+        }
+
+        return { id: submissionId, formId, answers };
     }
 }

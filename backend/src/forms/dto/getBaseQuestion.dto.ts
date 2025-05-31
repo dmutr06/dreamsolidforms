@@ -1,5 +1,3 @@
-
-
 export interface GetBaseQuestionDto {
     id: string,
     label: string,

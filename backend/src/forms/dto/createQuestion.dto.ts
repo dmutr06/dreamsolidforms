@@ -38,10 +38,6 @@ export class CreateQuestionDto {
     @IsBoolean()
     required?: boolean;
 
-    @IsOptional()
-    @IsNumber()
-    order?: number;
-
     @IsString()
     @IsNotEmpty()
     type: string;

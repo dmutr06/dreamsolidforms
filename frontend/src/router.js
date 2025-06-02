@@ -1,3 +1,4 @@
+
 import NotFoundPage from "./pages/NotFoundPage.js";
 
 export default class Router {

@@ -1,3 +1,4 @@
+
 import Page from "./Page.js";
 
 export default class RegisterPage extends Page {

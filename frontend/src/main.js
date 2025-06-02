@@ -1,15 +1,13 @@
 import "./style.css";
 
-async function main() {
-    const res = await fetch("/api/users/me");
+import Router from "./router.js";
+import HomePage from "./pages/HomePage.js";
+import LoginPage from "./pages/LoginPage.js";
+import RegisterPage from "./pages/RegisterPage.js";
+import NotFoundPage from "./pages/NotFoundPage.js";
 
-    const body = await res.json();
-
-    document.querySelector('#app').innerHTML = `
-        <div>
-            <div>${body.name} AAAA</div>
-        </div>
-    `;
-}
-
-main();
+new Router({
+  "/": HomePage,
+  "/login": LoginPage,
+  "/register": RegisterPage,
+});

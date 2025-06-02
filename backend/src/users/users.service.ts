@@ -5,7 +5,7 @@ import { IUsersService } from "./users.service.interface";
 import { TYPES } from "../inversify.types";
 import { UsersRepository } from "./users.repository";
 import { CreateUserDto } from "./dto/createUser.dto";
-import { User } from "./user.interface";
+import { User } from "../generated/prisma";
 import { HttpError } from "../common/httpError";
 
 @injectable()

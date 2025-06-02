@@ -1,36 +1,29 @@
 import { inject, injectable } from "inversify";
-import { createId } from "@paralleldrive/cuid2";
 import { TYPES } from "../inversify.types";
-import { Database } from "../database/database.interface";
-import { User } from "./user.interface";
+import { Prisma, User } from "../generated/prisma";
 import { CreateUserDto } from "./dto/createUser.dto";
+import { PrismaService } from "../database/prisma.service";
+import { HttpError } from "../common/httpError";
 
 @injectable()
 export class UsersRepository {
-    constructor(@inject(TYPES.Database) private db: Database) {}
+    private readonly user: Prisma.UserDelegate;
+    constructor(@inject(TYPES.PrismaService) private db: PrismaService) {
+        this.user = this.db.client.user;
+    }
 
     public async getUserById(id: string): Promise<User | null> {
-        const res = await this.db.query<User>("SELECT * FROM users WHERE id = ?", [id]);
-
-        if (!res || res.length == 0) return null;
-
-        return res[0];
+        return this.user.findUnique({ where: { id } });
     }
 
-    public async createUser(userDto: CreateUserDto): Promise<User | null> {
-        const user: User = { ...userDto, id: createId() };
-
-        if (await this.db.run("INSERT INTO users (id, name, password) VALUES (?, ?, ?)", [user.id, user.name, user.password]))
-            return user;
-        else 
-            return null;
+    public async getUserByName(name: string): Promise<User | null> {
+        return this.user.findUnique({ where: { name } });
     }
 
-    public async getUserByName(name: String): Promise<User | null> {
-        const res = await this.db.query<User>("SELECT * FROM users WHERE name = ?", [name]);
+    public async createUser(userDto: CreateUserDto): Promise<User> {
+        if (await this.getUserByName(userDto.name)) 
+            throw new HttpError(400, "User with such name already exists");
 
-        if (!res || res.length == 0) return null;
-
-        return res[0];
+        return this.user.create({ data: userDto });
     }
 }

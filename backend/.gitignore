@@ -3,6 +3,4 @@ node_modules
 public
 .env
 
-*.db
-*.db-shm
-*.db-wal
+/src/generated/prisma

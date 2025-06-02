@@ -1,6 +1,5 @@
 import { CreateUserDto } from "./dto/createUser.dto";
-import { User } from "./user.interface";
-
+import { User } from "../generated/prisma";
 
 export interface IUsersService {
     getUserById(id: string): Promise<User | null>,

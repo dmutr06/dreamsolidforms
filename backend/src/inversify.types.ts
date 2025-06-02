@@ -7,5 +7,4 @@ export const TYPES = {
     FormsService: Symbol.for("FormsService"),
     FormsRepository: Symbol.for("FormsRepository"),
     PrismaService: Symbol.for("PrismaService"),
-    Database: Symbol.for("Database"),
 };

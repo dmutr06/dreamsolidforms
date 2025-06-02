@@ -7,7 +7,7 @@ import { IFormsService } from "./forms.service.interface";
 import { AuthMiddleware } from "../common/auth.middleware";
 import { FormsRepository } from "./forms.repository";
 import { ValidateMiddlleware } from "../common/validate.middleware";
-import { CreateFormDto } from "./dto/createForm.dto";
+import { CreateFormDto } from "./dtos/createForm.dto";
 import { TypedRequest } from "../common/customRequest";
 import { HttpError } from "../common/httpError";
 

@@ -1,5 +1,7 @@
+import "./style.css";
+import Page from "../Page.js";
 
-import Page from "./Page.js";
+import { api } from "../../api.js";
 
 export default class RegisterPage extends Page {
   render() {
@@ -7,8 +9,8 @@ export default class RegisterPage extends Page {
       <h1>Register</h1>
       <form id="register-form" novalidate>
         <div>
-          <label for="email">Email</label>
-          <input type="email" id="email" required />
+          <label for="name">Name</label>
+          <input type="text" id="name" required />
         </div>
         <div>
           <label for="password">Password</label>
@@ -23,7 +25,8 @@ export default class RegisterPage extends Page {
       </form>
 
       <p class="switch-auth">
-        Already have an account? <a href="/login" data-link class="login-register-link">Log in</a>
+        Already have an account? 
+        <a href="/login" data-link class="login-register-link">Log in</a>
       </p>
     `;
   }
@@ -36,7 +39,7 @@ export default class RegisterPage extends Page {
       e.preventDefault();
       errorEl.textContent = "";
 
-      const email = form.email.value.trim();
+      const name = form.name.value.trim();
       const password = form.password.value;
       const confirm = form["confirm-password"].value;
 
@@ -44,15 +47,13 @@ export default class RegisterPage extends Page {
         errorEl.textContent = "Passwords do not match";
         return;
       }
+      if (!name || !password) {
+        errorEl.textContent = "Please fill in all fields";
+        return;
+      }
 
       try {
-
-        if (!email || !password) {
-          throw new Error("Please fill in all fields");
-        }
-        const fakeToken = "registered_token_123";
-        localStorage.setItem("token", fakeToken);
-
+        await api.register({ name, password });
         history.pushState(null, "", "/dashboard");
         window.dispatchEvent(new Event("popstate"));
       } catch (err) {

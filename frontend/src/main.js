@@ -1,10 +1,11 @@
-import "./style.css";
+import "./global.css";
 
 import Router from "./router.js";
-import HomePage from "./pages/HomePage.js";
-import LoginPage from "./pages/LoginPage.js";
-import RegisterPage from "./pages/RegisterPage.js";
-import NotFoundPage from "./pages/NotFoundPage.js";
+
+import HomePage from "./pages/HomePage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 new Router({
   "/": HomePage,

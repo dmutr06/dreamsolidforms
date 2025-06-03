@@ -3,4 +3,5 @@ node_modules
 public
 .env
 
-/src/generated/prisma
+src/generated/prisma
+prisma/data.db

@@ -14,7 +14,10 @@ export class ValidateMiddlleware<T extends object> implements Middleware {
         const errors = await validate(instance);
 
         if (errors.length > 0) {
-            throw new HttpError(400, errors[0].toString());
+            const constraints = Object.values(errors[0].constraints || {});
+            if (constraints.length == 0)
+                throw new HttpError(400, "Validation failed");
+            throw new HttpError(400, constraints[0]);
         }
 
         req.body = instance;

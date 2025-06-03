@@ -33,7 +33,7 @@ export class App {
         router.use("/forms", this.formsController.buildRouter());
 
         this.app.use("/api", router);
-        this.app.all("/api/*$", () => { throw new HttpError(404, "Not Found") });
+        this.app.all("/api/*$", () => { throw new HttpError(404, "Not Found"); });
     }
 
     public async run(port: number) {
@@ -44,11 +44,13 @@ export class App {
         this.app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
             if (!err) return;
 
+
             if (err instanceof HttpError) {
                 res.status(err.code).send({ statusCode: err.code, message: err.message });
             } else if (err instanceof SyntaxError) {
                 res.status(400).send({ statusCode: 400, message: "Bad json" });
             } else {
+                console.log(err);
                 res.status(500).send({ statusCode: 500, message: "Internal server error :(" });
             }
         });

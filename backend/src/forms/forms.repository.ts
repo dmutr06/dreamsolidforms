@@ -67,7 +67,7 @@ export class FormsRepository {
                     }),
                 },
             }
-        })
+        });
     }
 
     private mapType(type: string): QuestionType {
@@ -113,7 +113,7 @@ export class FormsRepository {
                 }
             },
             include: { answers: true },
-        })
+        });
     }
 
     async getSubmission(id: string): Promise<Submission | null> {

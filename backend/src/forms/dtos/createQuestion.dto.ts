@@ -35,6 +35,7 @@ export class CreateQuestionDto {
     @IsNotEmpty()
     label: string;
 
+    @IsOptional()
     @IsBoolean()
     required?: boolean;
 

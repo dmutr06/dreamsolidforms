@@ -6,7 +6,7 @@ import stylistic from "@stylistic/eslint-plugin";
 
 
 export default defineConfig([
-    { ignores: ["build", "public"] },
+    { ignores: ["build", "public", "src/generated/prisma"] },
     {
         files: ["**/*.{js,mjs,cjs,ts}"],
         plugins: { js, "@stylistic": stylistic },

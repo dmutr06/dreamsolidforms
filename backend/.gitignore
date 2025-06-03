@@ -4,3 +4,4 @@ public
 .env
 
 /src/generated/prisma
+prisma/data.db

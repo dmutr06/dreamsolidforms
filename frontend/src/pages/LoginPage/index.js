@@ -1,5 +1,6 @@
-
-import Page from "./Page.js";
+import "./style.css";
+import Page from "../Page.js";
+import { api } from "../../api.js";
 
 export default class LoginPage extends Page {
   render() {
@@ -7,19 +8,20 @@ export default class LoginPage extends Page {
       <h1>Login</h1>
       <form id="login-form" novalidate>
         <div>
-          <label for="email">Email</label>
-          <input type="email" id="email" required />
+          <label for="name">Name</label>
+          <input type="text" id="name" required />
         </div>
         <div>
           <label for="password">Password</label>
           <input type="password" id="password" required minlength="6" />
         </div>
         <button type="submit">Log In</button>
-        <p id="error"></p>
+        <p id="error" class="error-msg"></p>
       </form>
 
       <p class="switch-auth">
-        Don't have an account? <a href="/register" data-link class="login-register-link">Register</a>
+        Don't have an account? 
+        <a href="/register" data-link class="login-register-link">Register</a>
       </p>
     `;
   }
@@ -32,22 +34,16 @@ export default class LoginPage extends Page {
       e.preventDefault();
       errorEl.textContent = "";
 
-      const email = form.email.value.trim();
+      const name = form.name.value.trim();
       const password = form.password.value;
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        errorEl.textContent = "Please enter a valid email.";
-        return;
-      }
-      if (password.length < 6) {
-        errorEl.textContent = "Password must be at least 6 characters.";
+      if (!name || !password) {
+        errorEl.textContent = "Please fill in all fields";
         return;
       }
 
       try {
-        const fakeToken = "login_token_123";
-        localStorage.setItem("token", fakeToken);
+        await api.login({ name, password });
 
         history.pushState(null, "", "/dashboard");
         window.dispatchEvent(new Event("popstate"));

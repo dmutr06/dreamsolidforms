@@ -1,5 +1,4 @@
-
-import NotFoundPage from "./pages/NotFoundPage.js";
+import NotFoundPage from "./pages/NotFoundPage";
 
 export default class Router {
   constructor(routes) {

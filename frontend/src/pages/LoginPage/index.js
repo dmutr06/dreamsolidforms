@@ -45,7 +45,7 @@ export default class LoginPage extends Page {
       try {
         await api.login({ name, password });
 
-        history.pushState(null, "", "/dashboard");
+        history.pushState(null, "", "/");
         window.dispatchEvent(new Event("popstate"));
       } catch (err) {
         errorEl.textContent = err.message;

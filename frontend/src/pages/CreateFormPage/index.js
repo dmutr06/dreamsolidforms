@@ -9,6 +9,11 @@ import ChoiceQuestion from "../../questions/CreateChoiceQuestion.js";
 export default class CreateFormPage extends Page {
   constructor(params) {
     super(params);
+
+    this.titleMaxLength = 35;
+
+    this.descriptionMaxLength = 150;
+
     this.title = "";
     this.description = "";
     this.questions = [new TextQuestion()];
@@ -34,6 +39,7 @@ export default class CreateFormPage extends Page {
             class="input"
             placeholder="Enter title"
             required
+            maxlength="${this.titleMaxLength}"
           />
 
           <label for="form-description">Description (optional):</label>
@@ -42,6 +48,7 @@ export default class CreateFormPage extends Page {
             class="textarea"
             placeholder="Short description"
             rows="3"
+            maxlength="${this.descriptionMaxLength}"
           ></textarea>
         </div>
 
@@ -228,15 +235,15 @@ export default class CreateFormPage extends Page {
 
     const q = this.questions[this.selectedQuestionIndex];
     if (!q) {
-      this.questionSettingsEl.innerHTML = `<p>Add a question to start configuring</p>`;
+      this.questionSettingsEl.innerHTML = `<p>Select a question on the left to configure it</p>`;
       return;
     }
 
     this.questionSettingsEl.innerHTML = q.getSettingsUI();
 
     const index = this.selectedQuestionIndex;
-
     const typeSelect = this.questionSettingsEl.querySelector("#q-type");
+
     if (typeSelect) {
       typeSelect.addEventListener("change", (e) => {
         const newType = e.target.value;
@@ -264,8 +271,13 @@ export default class CreateFormPage extends Page {
 
   async saveForm() {
     const title = this.titleInput.value.trim();
-    if (!title) {
-      alert("Please enter a form title.");
+    if (!title) { 
+      alert("Please enter a form title."); 
+      this.titleInput.focus(); 
+      return; 
+    }
+    if (title.length > this.titleMaxLength) {
+      alert(`Title must be at most ${this.titleMaxLength} characters.`);
       this.titleInput.focus();
       return;
     }
@@ -279,11 +291,17 @@ export default class CreateFormPage extends Page {
       }
     }
 
-    const payloadQuestions = this.questions.map((q) => q.toDTO());
+    const description = this.descInput.value.trim();
+    if (description.length > this.descriptionMaxLength) {
+      alert(`Description must be at most ${this.descriptionMaxLength} characters.`);
+      this.descInput.focus();
+      return;
+    }
 
+    const payloadQuestions = this.questions.map((q) => q.toDTO());
     const payload = {
       title,
-      description: this.descInput.value.trim(),
+      description,
       questions: payloadQuestions,
     };
 

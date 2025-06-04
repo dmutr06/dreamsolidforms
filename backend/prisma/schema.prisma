@@ -26,6 +26,7 @@ model Form {
     id          String        @id @default(uuid())
     title       String
     createdAt   DateTime      @default(now())
+    description String?
     userId      String
     user        User          @relation(fields: [userId], references: [id])
     questions   Question[]

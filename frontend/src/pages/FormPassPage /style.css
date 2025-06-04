@@ -1,0 +1,32 @@
+.form-pass-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form-pass-page h1 {
+  text-align: center;
+}
+
+.form-pass-page .question-block {
+  margin-bottom: 15px;
+}
+
+.form-pass-page label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-pass-page input {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.form-pass-page button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}

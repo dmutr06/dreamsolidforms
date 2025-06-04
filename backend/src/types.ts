@@ -12,3 +12,5 @@ export interface Route {
     handler: string,
     middlewares: RequestHandler[],
 }
+
+

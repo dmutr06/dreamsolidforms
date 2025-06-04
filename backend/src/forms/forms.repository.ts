@@ -5,7 +5,7 @@ import { CreateFormDto } from "./dtos/createForm.dto";
 import { CreateChoiceQuestion, CreateNumberQuestion, CreateTextQuestion } from "./dtos/createQuestion.dto";
 import { ChoiceAnswer, NumberAnswer, TextAnswer } from "./dtos/createAnswer.dto";
 import { CreateSubmissionDto } from "./dtos/createSubmission.dto";
-import { Form, Prisma, QuestionType, Submission } from "../generated/prisma";
+import { Form, Question, Prisma, QuestionType, Submission } from "../generated/prisma";
 import { PrismaService } from "../database/prisma.service";
 
 @injectable()
@@ -21,8 +21,11 @@ export class FormsRepository {
         return this.form.findMany();
     }
 
-    public async getFormById(id: string): Promise<Form | null> {
-        return this.form.findUnique({ where: { id }, include: { questions: true } });
+    public async getFormById(id: string): Promise<Prisma.FormGetPayload<{ include: { questions: true } }> | null> {
+        return this.form.findUnique({
+            where: { id },
+            include: { questions: true },
+        });
     }
 
     public async createForm(form: CreateFormDto & { userId: string }): Promise<Form | null> {

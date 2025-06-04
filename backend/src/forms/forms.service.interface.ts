@@ -1,6 +1,11 @@
-import { Form } from "../generated/prisma";
-
+import { Form, Submission } from "../generated/prisma";
+import { CreateFormDto } from "./dtos/createForm.dto";
+import { CreateSubmissionDto } from "./dtos/createSubmission.dto";
 
 export interface IFormsService {
-    getFormById(id: string): Promise<Form | null>,
+    getAllForms(): Promise<Form[]>;
+    getFormById(id: string): Promise<Form>;
+    createForm(data: CreateFormDto & { userId: string }): Promise<Form>;
+    submitForm(data: CreateSubmissionDto & { userId: string }): Promise<Submission>;
+    getSubmissionById(id: string): Promise<Submission>;
 }

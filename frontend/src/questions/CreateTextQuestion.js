@@ -1,7 +1,7 @@
-import Question from "./Question.js";
+import CreateQuestion from "./CreateQuestion.js";
 import { escapeHTML } from "../utils/htmlUtils.js";
 
-export default class TextQuestion extends Question {
+export default class CreateTextQuestion extends CreateQuestion {
   constructor(label = "", required = false, answer = "") {
     super(label, required);
     this.type = "text";

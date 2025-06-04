@@ -1,6 +1,6 @@
 import { escapeHTML } from "../utils/htmlUtils.js";
 
-export default class Question {
+export default class CreateQuestion {
   constructor(label = "", required = false) {
     this.label = label;
     this.required = required;

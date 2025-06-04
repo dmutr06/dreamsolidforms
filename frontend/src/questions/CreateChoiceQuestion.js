@@ -1,7 +1,7 @@
-import Question from "./Question.js";
+import CreateQuestion from "./CreateQuestion.js";
 import { escapeHTML } from "../utils/htmlUtils.js";
 
-export default class ChoiceQuestion extends Question {
+export default class CreateChoiceQuestion extends CreateQuestion {
   constructor(label = "", required = false, options = [""], answerIndex = 0) {
     super(label, required);
     this.type = "choice";

@@ -2,9 +2,9 @@ import "./style.css";
 import Page from "../Page.js";
 import { api } from "../../api.js";
 import { escapeHTML } from "../../utils/htmlUtils.js";
-import TextQuestion from "../../questions/TextQuestion.js";
-import NumberQuestion from "../../questions/NumberQuestion.js";
-import ChoiceQuestion from "../../questions/ChoiceQuestion.js";
+import TextQuestion from "../../questions/CreateTextQuestion.js";
+import NumberQuestion from "../../questions/CreateNumberQuestion.js";
+import ChoiceQuestion from "../../questions/CreateChoiceQuestion.js";
 
 export default class CreateFormPage extends Page {
   constructor(params) {

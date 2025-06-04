@@ -1,6 +1,6 @@
-import Question from "./Question.js";
+import CreateQuestion from "./CreateQuestion.js";
 
-export default class NumberQuestion extends Question {
+export default class CreateNumberQuestion extends CreateQuestion {
   constructor(label = "", required = false, answer = null, min = null, max = null) {
     super(label, required);
     this.type = "number";

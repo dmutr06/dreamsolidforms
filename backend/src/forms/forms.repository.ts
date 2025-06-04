@@ -29,6 +29,7 @@ export class FormsRepository {
         return this.form.create({
             data: {
                 title: form.title,
+                description: form.description,
                 userId: form.userId, 
                 questions: {
                     create: form.questions.map((q, idx) => {

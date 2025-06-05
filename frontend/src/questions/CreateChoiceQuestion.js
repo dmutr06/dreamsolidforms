@@ -40,7 +40,7 @@ export default class CreateChoiceQuestion extends CreateQuestion {
           />
           <button
             type="button"
-            class="button delete-wrong-option"
+            class="btn delete-wrong-option"
             data-index="${wrongIdx}"
             title="Delete this answer"
           >
@@ -55,7 +55,7 @@ export default class CreateChoiceQuestion extends CreateQuestion {
         <button
           type="button"
           id="add-wrong-option-btn"
-          class="button"
+          class="btn"
           title="Add another incorrect answer"
         >
           +

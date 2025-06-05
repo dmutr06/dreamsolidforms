@@ -1,13 +1,13 @@
-import "./style.css";
 import Page from "../Page.js";
 
 import { api } from "../../api.js";
+import { navigate } from "../../utils/navigate.js";
 
 export default class RegisterPage extends Page {
   render() {
     return /*html*/`
       <h1>Register</h1>
-      <form id="register-form" novalidate>
+      <form class="auth-form" id="register-form" novalidate>
         <div>
           <label for="name">Name</label>
           <input type="text" id="name" required />
@@ -20,7 +20,7 @@ export default class RegisterPage extends Page {
           <label for="confirm-password">Confirm Password</label>
           <input type="password" id="confirm-password" required minlength="6" />
         </div>
-        <button type="submit">Sign Up</button>
+        <button class="btn" type="submit">Sign Up</button>
         <p id="error" class="error-msg"></p>
       </form>
 
@@ -54,8 +54,7 @@ export default class RegisterPage extends Page {
 
       try {
         await api.register({ name, password });
-        history.pushState(null, "", "/dashboard");
-        window.dispatchEvent(new Event("popstate"));
+        navigate("/");
       } catch (err) {
         errorEl.textContent = err.message;
       }

@@ -5,6 +5,7 @@ import { escapeHTML } from "../../utils/htmlUtils.js";
 import TextQuestion from "../../questions/CreateTextQuestion.js";
 import NumberQuestion from "../../questions/CreateNumberQuestion.js";
 import ChoiceQuestion from "../../questions/CreateChoiceQuestion.js";
+import { navigate } from "../../utils/navigate.js";
 
 export default class CreateFormPage extends Page {
   constructor(params) {
@@ -58,7 +59,7 @@ export default class CreateFormPage extends Page {
           <button
             type="button"
             id="add-question-btn"
-            class="button"
+            class="btn new-question-btn"
             title="Add new question"
           >
             +
@@ -76,7 +77,7 @@ export default class CreateFormPage extends Page {
       <button
         type="button"
         id="save-form-btn"
-        class="button submit-button"
+        class="btn submit-button"
       >
         Create Form
       </button>
@@ -308,8 +309,7 @@ export default class CreateFormPage extends Page {
     try {
       await api.createForm(payload);
       alert("Form created successfully!");
-      history.pushState(null, "", "/");
-      window.dispatchEvent(new Event("popstate"));
+      navigate("/");
     } catch (err) {
       alert(`Error creating form:\n${err.message}`);
       console.error(err);

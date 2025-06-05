@@ -21,7 +21,7 @@
 .form-item {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   padding: 1rem 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -40,22 +40,6 @@
   margin-bottom: 1rem;
   background-color: #1e1e1e;
   box-sizing: border-box;
-}
-
-.create-btn {
-  background-color: #3a3a3a;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  color: #ffffff;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.create-btn:hover {
-  background-color: #505050;
-  border-color: #646cff;
 }
 
 .form-info {
@@ -81,38 +65,6 @@
   text-align: left;
   white-space: pre-wrap;
   word-break: break-word;
-}
-
-.buttons-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.fill-btn,
-.delete-btn {
-  background-color: #3a3a3a;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  color: #ffffff;
-  cursor: pointer;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
-}
-
-.fill-btn:hover {
-  background-color: #505050;
-  border-color: #646cff;
-}
-
-.delete-btn {
-  background-color: #4a1a1a;
-}
-
-.delete-btn:hover {
-  background-color: #602222;
-  border-color: #ff5555;
 }
 
 .no-forms {

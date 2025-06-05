@@ -1,0 +1,49 @@
+.auth-form {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.auth-form div {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-form label {
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+  color: #dddddd;
+}
+
+.auth-form input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #444444;
+  border-radius: 4px;
+  background-color: #262626;
+  color: #ffffff;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #888888;
+}
+
+.switch-auth {
+  text-align: center;
+  margin-top: 0.5rem;
+  color: #cccccc;
+}
+
+#error {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #ff5555;
+  min-height: 1.2em;
+}

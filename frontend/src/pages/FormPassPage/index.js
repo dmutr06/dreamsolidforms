@@ -32,7 +32,7 @@ export default class FormPassPage extends Page {
         .map(
           (q) => `
             <div class="question-block">
-              <label>${q.text}</label>
+              <label>${q.label}</label>
               <input type="text" data-question-id="${q.id}" />
             </div>
           `

@@ -2,6 +2,7 @@ import "./style.css";
 import Page from "../Page.js";
 import { api } from "../../api.js";
 import { escapeHTML } from "../../utils/htmlUtils.js";
+import { navigate } from "../../utils/navigate.js";
 
 export default class HomePage extends Page {
   constructor(params) {
@@ -16,7 +17,7 @@ export default class HomePage extends Page {
       <h1 class="page-title">Available Forms</h1>
       <div class="home-container">
         <div id="create-container" class="form-item create-item">
-          <button id="create-btn" class="button create-btn">Create New Form</button>
+          <a href="/create-form" data-link class="btn">Create New Form</a>
         </div>
         <ul id="forms-list" class="forms-list"></ul>
       </div>
@@ -26,12 +27,6 @@ export default class HomePage extends Page {
   afterRender() {
     this.formsListEl = document.getElementById("forms-list");
     this.createContainer = document.getElementById("create-container");
-    const createBtn = document.getElementById("create-btn");
-
-    createBtn.addEventListener("click", () => {
-      history.pushState(null, "", "/create-form");
-      window.dispatchEvent(new Event("popstate"));
-    });
 
     this.loadForms();
   }
@@ -42,6 +37,8 @@ export default class HomePage extends Page {
       this.forms = Array.isArray(forms) ? forms.reverse() : [];
       this.renderFormsList();
     } catch (err) {
+
+      if (err.message == "Unauthorized") return navigate("/login");
       console.error(err);
       alert("Unable to load forms: " + err.message);
     }
@@ -66,29 +63,8 @@ export default class HomePage extends Page {
             form.description ? escapeHTML(form.description) : "No description."
           }</p>
         </div>
-        <div class="buttons-group">
-          <button class="button fill-btn" data-id="${form.id}">Fill</button>
-          <button class="button delete-btn" data-id="${form.id}">Delete</button>
-        </div>
+        <a href="/forms/${form.id}" data-link class="btn fill-btn" data-id="${form.id}">Fill</a>
       `;
-
-      const fillBtn = li.querySelector(".fill-btn");
-      fillBtn.addEventListener("click", () => {
-        history.pushState(null, "", `/form/${form.id}`);
-        window.dispatchEvent(new Event("popstate"));
-      });
-
-      const deleteBtn = li.querySelector(".delete-btn");
-      deleteBtn.addEventListener("click", async () => {
-        if (!confirm("Are you sure you want to delete this form?")) return;
-        try {
-          await api.deleteForm(form.id);
-          this.loadForms();
-        } catch (err) {
-          console.error(err);
-          alert("Unable to delete form: " + err.message);
-        }
-      });
 
       this.formsListEl.appendChild(li);
     });

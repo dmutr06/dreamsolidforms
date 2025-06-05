@@ -1,12 +1,12 @@
-import "./style.css";
 import Page from "../Page.js";
 import { api } from "../../api.js";
+import { navigate } from "../../utils/navigate.js";
 
 export default class LoginPage extends Page {
   render() {
     return /*html*/`
       <h1>Login</h1>
-      <form id="login-form" novalidate>
+      <form class="auth-form" id="login-form" novalidate>
         <div>
           <label for="name">Name</label>
           <input type="text" id="name" required />
@@ -15,7 +15,7 @@ export default class LoginPage extends Page {
           <label for="password">Password</label>
           <input type="password" id="password" required minlength="6" />
         </div>
-        <button type="submit">Log In</button>
+        <button class="btn" type="submit">Log In</button>
         <p id="error" class="error-msg"></p>
       </form>
 
@@ -45,8 +45,7 @@ export default class LoginPage extends Page {
       try {
         await api.login({ name, password });
 
-        history.pushState(null, "", "/");
-        window.dispatchEvent(new Event("popstate"));
+        navigate("/");
       } catch (err) {
         errorEl.textContent = err.message;
       }

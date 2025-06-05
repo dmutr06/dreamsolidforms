@@ -43,6 +43,6 @@ export class FormsController extends Controller {
     @use(new AuthGuard())
     async getUserForms(req: AuthedRequest, res: Response) {
         const forms = await this.formsService.getAllForms();
-        res.json(forms);
+        return res.json(forms);
     }
 }

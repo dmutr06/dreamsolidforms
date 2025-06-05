@@ -12,19 +12,20 @@ import { PrismaService } from "../database/prisma.service";
 export class FormsRepository {
     private readonly form: Prisma.FormDelegate;
     private readonly submission: Prisma.SubmissionDelegate;
+
     constructor(@inject(TYPES.PrismaService) private db: PrismaService) {
         this.form = this.db.client.form;
         this.submission = this.db.client.submission;
     }
-    
+
     public async getAllForms(): Promise<Form[]> {
         return this.form.findMany();
     }
 
-    public async getFormById(id: string): Promise<Prisma.FormGetPayload<{ include: { questions: true } }> | null> {
+    public async getFormById(id: string): Promise<(Form & { questions: Question[] }) | null> {
         return this.form.findUnique({
             where: { id },
-            include: { questions: true },
+            include: { questions: true }, // Включаем вопросы
         });
     }
 
@@ -33,44 +34,41 @@ export class FormsRepository {
             data: {
                 title: form.title,
                 description: form.description,
-                userId: form.userId, 
+                userId: form.userId,
                 questions: {
                     create: form.questions.map((q, idx) => {
                         const base = {
                             label: q.label,
                             required: q.required ?? false,
                             order: idx,
-                            type: this.mapType(q.type)
+                            type: this.mapType(q.type),
                         };
 
                         switch (base.type) {
                             case QuestionType.TEXT:
                                 return {
                                     ...base,
-                                    text: (q.info as CreateTextQuestion).answer 
+                                    text: (q.info as CreateTextQuestion).answer,
                                 };
                             case QuestionType.NUMBER:
                                 return {
                                     ...base,
-                                    number: (q.info as CreateNumberQuestion).answer 
+                                    number: (q.info as CreateNumberQuestion).answer,
                                 };
                             case QuestionType.CHOICE:
                                 return {
                                     ...base,
                                     choices: JSON.stringify((q.info as CreateChoiceQuestion).options),
-                                    choice: (q.info as CreateChoiceQuestion).answer
+                                    choice: (q.info as CreateChoiceQuestion).answer,
                                 };
                             case QuestionType.CHECKBOX:
-                                throw new HttpError(501, "Not implemented yet");
-                                // return {
-                                //     ...base,
-                                //     choices: JSON.stringify((q.info as CreateChoiceQuestion).options),
-                                //     // choice: (q.info as CreateChoiceQuestion).answer
-                                // };
+                                throw new HttpError(501, "Checkbox question type not implemented yet");
+                            default:
+                                throw new HttpError(400, `Invalid question type: ${q.type}`);
                         }
                     }),
                 },
-            }
+            },
         });
     }
 
@@ -95,7 +93,7 @@ export class FormsRepository {
                 form: { connect: { id: submission.formId } },
                 user: { connect: { id: submission.userId } },
                 answers: {
-                    create: submission.answers.map(a => {
+                    create: submission.answers.map((a) => {
                         const base = {
                             question: { connect: { id: a.questionId } },
                         };
@@ -104,23 +102,24 @@ export class FormsRepository {
 
                         switch (type) {
                             case QuestionType.TEXT:
-                                return { ...base, textValue: (a.info as TextAnswer).value  };
+                                return { ...base, textValue: (a.info as TextAnswer).value };
                             case QuestionType.NUMBER:
-                                return { ...base, numberValue: (a.info as NumberAnswer).value  };
+                                return { ...base, numberValue: (a.info as NumberAnswer).value };
                             case QuestionType.CHOICE:
-                                return { ...base, choiceValue: (a.info as ChoiceAnswer).value  };
+                                return { ...base, choiceValue: (a.info as ChoiceAnswer).value };
+                            case QuestionType.CHECKBOX:
+                                throw new HttpError(501, "Checkbox answer type not implemented yet");
                             default:
-                            case QuestionType.TEXT:
-                                throw new HttpError(501, "Not implemented yet");
-                        };
+                                throw new HttpError(400, `Unknown answer type: ${a.type}`);
+                        }
                     }),
-                }
+                },
             },
             include: { answers: true },
         });
     }
 
-    async getSubmission(id: string): Promise<Submission | null> {
+    public async getSubmission(id: string): Promise<Submission | null> {
         return this.submission.findUnique({ where: { id }, include: { answers: true } });
     }
 }

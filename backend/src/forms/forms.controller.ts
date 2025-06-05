@@ -33,16 +33,16 @@ export class FormsController extends Controller {
     @get("/:id")
     @use(new AuthGuard())
     async getFormById(req: AuthedRequest, res: Response) {
-    const { id } = req.params as { id: string };
+        const { id } = req.params as { id: string };
 
-    const form = await this.formsService.getFormById(id);
-    res.json(form);
-}
+        const form = await this.formsService.getFormById(id);
+        return res.json(form);
+    }
 
     @get("/")
     @use(new AuthGuard())
     async getUserForms(req: AuthedRequest, res: Response) {
-        const forms = await this.formsService.getFormById(req.user);
+        const forms = await this.formsService.getAllForms();
         res.json(forms);
     }
 }

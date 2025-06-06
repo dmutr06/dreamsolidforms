@@ -5,7 +5,7 @@ import { HttpError } from "../common/httpError";
 import { CreateFormDto } from "./dtos/createForm.dto";
 import { CreateSubmissionDto } from "./dtos/createSubmission.dto";
 import { IFormsService } from "./forms.service.interface";
-import { Form, Submission, QuestionType } from "../generated/prisma";
+import { Form, Submission, QuestionType, Question } from "../generated/prisma";
 
 @injectable()
 export class FormsService implements IFormsService {
@@ -28,6 +28,21 @@ export class FormsService implements IFormsService {
     }
 
     public async submitForm(data: CreateSubmissionDto & { userId: string }): Promise<Submission> {
+        const form = await this.getFormById(data.formId) as (Form & { questions: Question[] });
+
+        form.questions.forEach(q => {
+            const ans = data.answers.find(a => a.questionId == q.id);
+
+            if (!ans) {
+                if (q.required)
+                    throw new HttpError(400, `Question ${q.order + 1} is required`);
+                return;
+            }
+
+            if (ans.type.toLowerCase() != q.type.toLowerCase())
+                throw new HttpError(400, `Question ${q.order + 1} has to be of type "${q.type}"`);
+        });
+
         const submission = await this.formsRepo.createSubmission(data);
         if (!submission) throw new HttpError(500, "Internal Server Error");
         return submission;

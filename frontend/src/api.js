@@ -60,6 +60,18 @@ export class ApiService {
     async createForm(data) {
         return await this.request("POST", "/forms", data);
     }
+
+    async submitForm(data) {
+        return await this.request("POST", "/forms/submissions", data);
+    }
+
+    async getMySubmissions() {
+        return await this.request("GET", "/forms/submissions");
+    }
+
+    async getSubmission(id) {
+        return await this.request("GET", `/forms/submissions/${id}`);
+    }
 }
 
 export const api = new ApiService("/api");

@@ -18,6 +18,7 @@ export default class HomePage extends Page {
       <div class="home-container">
         <div id="create-container" class="form-item create-item">
           <a href="/create-form" data-link class="btn">Create New Form</a>
+          <a href="/submissions" data-link class="btn">Submissions</a>
         </div>
         <ul id="forms-list" class="forms-list"></ul>
       </div>

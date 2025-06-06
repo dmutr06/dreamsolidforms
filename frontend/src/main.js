@@ -7,12 +7,16 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import CreateFormPage from "./pages/CreateFormPage";
-import FormPassPage from "./pages/FormPassPage";
+import PassFormPage from "./pages/PassFormPage/index.js";
+import SubmissionsPage from "./pages/SubmissionsPage/index.js";
+import SubmissionPage from "./pages/SubmissionPage/index.js";
 
 new Router({
   "/": HomePage,
   "/login": LoginPage,
   "/register": RegisterPage,
   "/create-form": CreateFormPage,
-  "/forms/:id": FormPassPage,
+  "/forms/:id": PassFormPage,
+  "/submissions": SubmissionsPage,
+  "/submissions/:id": SubmissionPage,
 });

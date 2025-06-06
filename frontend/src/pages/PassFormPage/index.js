@@ -4,6 +4,13 @@ import { api } from "../../api.js";
 import { escapeHTML } from "../../utils/htmlUtils.js";
 import { navigate } from "../../utils/navigate.js";
 
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
 export default class PassFormPage extends Page {
   constructor(params) {
     super(params);
@@ -201,12 +208,16 @@ export default class PassFormPage extends Page {
 
     const options = JSON.parse(question.choices);
 
-    options.forEach((option, optionIndex) => {
+    const opts = options.map((option, idx) => {
       const optionEl = document.createElement("option");
-      optionEl.value = optionIndex;
+      optionEl.value = idx;
       optionEl.textContent = escapeHTML(option);
-      select.appendChild(optionEl);
+      return optionEl;
     });
+
+    shuffle(opts);
+
+    select.append(...opts);
 
     select.addEventListener("change", (e) => {
       this.answers[index].info.value = e.target.value ? Number(e.target.value) : null;

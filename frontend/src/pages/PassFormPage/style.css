@@ -54,6 +54,7 @@
 }
 
 .pass-form-questions label {
+    text-wrap: wrap;
     font-size: 1.25rem;
 }
 

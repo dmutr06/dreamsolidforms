@@ -51,6 +51,7 @@
 }
 
 .submission-answer-title {
+    text-wrap: wrap;
     font-size: 1.5rem;
     margin: 0;
 }

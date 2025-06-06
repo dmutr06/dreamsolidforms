@@ -1,0 +1,64 @@
+.pass-form-container {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.pass-form-info {
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding-block: 1rem;
+}
+
+.pass-form-title {
+    margin-top: 0;
+    text-align: center;
+}
+
+.pass-form-description {
+    text-align: center;
+    font-size: 1.25rem;
+    margin-bottom: 0;
+}
+
+.pass-input {
+  width: 100%;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding: 0.6rem;
+  border-radius: 4px;
+  border: 1px solid #444;
+  background-color: #2a2a2a;
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.4;
+  font-family: inherit;
+  resize: none;
+  margin-top: 1rem;
+}
+
+.pass-form-question {
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding-block: 1rem;
+    padding-inline: 1.25rem;
+}
+
+.pass-form-questions {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.pass-form-questions label {
+    font-size: 1.25rem;
+}
+
+.pass-form-submit {
+    display: block;
+    margin: 0 auto;
+    margin-top: 1rem;
+}

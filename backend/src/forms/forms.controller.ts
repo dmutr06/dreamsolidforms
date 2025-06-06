@@ -7,8 +7,8 @@ import { IFormsService } from "./forms.service.interface";
 import { CreateFormDto } from "./dtos/createForm.dto";
 import { ValidateMiddlleware } from "../common/validate.middleware";
 import { AuthedRequest } from "../common/customRequest";
-import { HttpError } from "../common/httpError";
 import { AuthGuard } from "../common/auth.guard";
+import { CreateSubmissionDto } from "./dtos/createSubmission.dto";
 
 @injectable()
 export class FormsController extends Controller {
@@ -30,6 +30,40 @@ export class FormsController extends Controller {
         res.status(201).json({ message: "Form created", form });
     }
 
+
+    @get("/")
+    @use(new AuthGuard())
+    async getForms(req: AuthedRequest, res: Response) {
+        const forms = await this.formsService.getAllForms();
+        return res.json(forms);
+    }
+
+    @post("/submissions")
+    @use(new AuthGuard(), new ValidateMiddlleware(CreateSubmissionDto))
+    async submitForm({ body, user }: AuthedRequest<CreateSubmissionDto>, res: Response) {
+        const result = this.formsService.submitForm({ ...body, userId: user });
+
+        return res.json(result);
+    }
+
+    @get("/submissions")
+    @use(new AuthGuard())
+    async getUsersSubmissions({ user }: AuthedRequest, res: Response) {
+        const submissions = await this.formsService.getUsersSubmissions(user);
+
+        return res.json(submissions);
+    }
+
+    @get("/submissions/:id")
+    @use(new AuthGuard())
+    async getSubmission({ user, params }: AuthedRequest, res: Response) {
+        const { id } = params as { id: string };
+
+        const submission = await this.formsService.getSubmissionById(id, user);
+
+        return res.json(submission);
+    }
+
     @get("/:id")
     @use(new AuthGuard())
     async getFormById(req: AuthedRequest, res: Response) {
@@ -37,12 +71,5 @@ export class FormsController extends Controller {
 
         const form = await this.formsService.getFormById(id);
         return res.json(form);
-    }
-
-    @get("/")
-    @use(new AuthGuard())
-    async getUserForms(req: AuthedRequest, res: Response) {
-        const forms = await this.formsService.getAllForms();
-        return res.json(forms);
     }
 }

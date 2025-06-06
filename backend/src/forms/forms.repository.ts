@@ -22,10 +22,17 @@ export class FormsRepository {
         return this.form.findMany();
     }
 
-    public async getFormById(id: string): Promise<(Form & { questions: Question[] }) | null> {
+    public async getFormById(id: string): Promise<Form | null> {
         return this.form.findUnique({
             where: { id },
-            include: { questions: true }, // Включаем вопросы
+            include: { questions: true },
+        });
+    }
+
+    public async getFormByIdWithoutAnswers(id: string): Promise<Form | null> {
+        return this.form.findUnique({
+            where: { id },
+            include: { questions: { omit: { text: true, choice: true, number: true, checkbox: true } } },
         });
     }
 
@@ -120,6 +127,10 @@ export class FormsRepository {
     }
 
     public async getSubmission(id: string): Promise<Submission | null> {
-        return this.submission.findUnique({ where: { id }, include: { answers: true } });
+        return this.submission.findUnique({ where: { id }, include: { answers: true, form: { include: { questions: true } } } });
+    }
+
+    public async getUsersSubmission(userId: string): Promise<Submission[]> {
+        return this.submission.findMany({ where: { userId }, include: { form: { select: { title: true } } } });
     }
 }

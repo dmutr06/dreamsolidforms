@@ -7,5 +7,6 @@ export interface IFormsService {
     getFormById(id: string): Promise<Form>;
     createForm(data: CreateFormDto & { userId: string }): Promise<Form>;
     submitForm(data: CreateSubmissionDto & { userId: string }): Promise<Submission>;
-    getSubmissionById(id: string): Promise<Submission>;
+    getSubmissionById(id: string, userId: string): Promise<Submission>;
+    getUsersSubmissions(id: string): Promise<Submission[]>
 }

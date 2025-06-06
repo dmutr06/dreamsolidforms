@@ -32,7 +32,7 @@ export class CreateAnswerDto {
 
     @ValidateNested()
     @Type((obj) => {
-        switch (obj?.object.type) {
+        switch (obj?.object.type.toLowerCase()) {
             case "choice":
                 return ChoiceAnswer;
             case "text":

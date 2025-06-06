@@ -5,9 +5,7 @@ import { HttpError } from "../common/httpError";
 import { CreateFormDto } from "./dtos/createForm.dto";
 import { CreateSubmissionDto } from "./dtos/createSubmission.dto";
 import { IFormsService } from "./forms.service.interface";
-import { Form, Submission, QuestionType, Question } from "../generated/prisma";
-
-type FormWithQuestions = Form & { questions: Question[] };
+import { Form, Submission, QuestionType } from "../generated/prisma";
 
 @injectable()
 export class FormsService implements IFormsService {
@@ -17,8 +15,8 @@ export class FormsService implements IFormsService {
         return this.formsRepo.getAllForms();
     }
 
-    public async getFormById(id: string): Promise<FormWithQuestions> {
-        const form = await this.formsRepo.getFormById(id);
+    public async getFormById(id: string): Promise<Form> {
+        const form = await this.formsRepo.getFormByIdWithoutAnswers(id);
         if (!form) throw new HttpError(404, "Form not found");
         return form;
     }
@@ -30,69 +28,75 @@ export class FormsService implements IFormsService {
     }
 
     public async submitForm(data: CreateSubmissionDto & { userId: string }): Promise<Submission> {
-        const form = await this.getFormById(data.formId);
-
-        this.checkSubmission(data, form);
-
         const submission = await this.formsRepo.createSubmission(data);
         if (!submission) throw new HttpError(500, "Internal Server Error");
         return submission;
     }
 
-    public async getSubmissionById(id: string): Promise<Submission> {
+    public async getSubmissionById(id: string, userId: string): Promise<Submission> {
         const submission = await this.formsRepo.getSubmission(id);
         if (!submission) throw new HttpError(404, "Submission not found");
-        return submission;
+
+        if (submission.userId == userId) return submission;
+
+        const form = await this.getFormById(submission.formId);
+        if (form.userId == userId) return submission;
+
+        throw new HttpError(403, "Can not access this submission");
     }
 
-    private checkSubmission(data: CreateSubmissionDto, form: FormWithQuestions): void {
-        const questions = form.questions;
-
-        const requiredQuestionIds = questions.filter((q) => q.required).map((q) => q.id);
-        const answeredQuestionIds = data.answers.map((a) => a.questionId);
-
-        for (const requiredId of requiredQuestionIds) {
-            if (!answeredQuestionIds.includes(requiredId)) {
-                throw new HttpError(400, `Required question ${requiredId} not answered`);
-            }
-        }
-
-        const questionMap = new Map(questions.map((q) => [q.id, q]));
-
-        for (const answer of data.answers) {
-            const question = questionMap.get(answer.questionId);
-            if (!question) {
-                throw new HttpError(400, `Question ${answer.questionId} does not belong to form`);
-            }
-
-            if (answer.type !== question.type) {
-                throw new HttpError(
-                    400,
-                    `Incorrect answer type for question ${question.id}. Expected ${question.type}, got ${answer.type}`
-                );
-            }
-
-            const value = (answer.info as any).value;
-
-            switch (question.type) {
-                case QuestionType.NUMBER:
-                    if (typeof value !== "number" || isNaN(value)) {
-                        throw new HttpError(400, `Answer to question ${question.id} must be a valid number`);
-                    }
-                    break;
-                case QuestionType.TEXT:
-                    if (typeof value !== "string" || value.trim() === "") {
-                        throw new HttpError(400, `Answer to question ${question.id} must be non-empty text`);
-                    }
-                    break;
-                case QuestionType.CHOICE:
-                    if (typeof value !== "number" || isNaN(value)) {
-                        throw new HttpError(400, `Answer to question ${question.id} must be a valid choice id`);
-                    }
-                    break;
-                default:
-                    throw new HttpError(400, `Unknown question type: ${question.type}`);
-            }
-        }
+    public async getUsersSubmissions(userId: string): Promise<Submission[]> {
+        return this.formsRepo.getUsersSubmission(userId);
     }
+
+    //private checkSubmission(data: CreateSubmissionDto, form: FormWithQuestions): void {
+    //    const questions = form.questions;
+    //
+    //    const requiredQuestionIds = questions.filter((q) => q.required).map((q) => q.id);
+    //    const answeredQuestionIds = data.answers.map((a) => a.questionId);
+    //
+    //    for (const requiredId of requiredQuestionIds) {
+    //        if (!answeredQuestionIds.includes(requiredId)) {
+    //            throw new HttpError(400, `Required question ${requiredId} not answered`);
+    //        }
+    //    }
+    //
+    //    const questionMap = new Map(questions.map((q) => [q.id, q]));
+    //
+    //    for (const answer of data.answers) {
+    //        const question = questionMap.get(answer.questionId);
+    //        if (!question) {
+    //            throw new HttpError(400, `Question ${answer.questionId} does not belong to form`);
+    //        }
+    //
+    //        if (answer.type !== question.type) {
+    //            throw new HttpError(
+    //                400,
+    //                `Incorrect answer type for question ${question.id}. Expected ${question.type}, got ${answer.type}`
+    //            );
+    //        }
+    //
+    //        const value = answer.info.value;
+    //
+    //        switch (question.type) {
+    //            case QuestionType.NUMBER:
+    //                if (typeof value !== "number" || isNaN(value)) {
+    //                    throw new HttpError(400, `Answer to question ${question.id} must be a valid number`);
+    //                }
+    //                break;
+    //            case QuestionType.TEXT:
+    //                if (typeof value !== "string" || value.trim() === "") {
+    //                    throw new HttpError(400, `Answer to question ${question.id} must be non-empty text`);
+    //                }
+    //                break;
+    //            case QuestionType.CHOICE:
+    //                if (typeof value !== "number" || isNaN(value)) {
+    //                    throw new HttpError(400, `Answer to question ${question.id} must be a valid choice id`);
+    //                }
+    //                break;
+    //            default:
+    //                throw new HttpError(400, `Unknown question type: ${question.type}`);
+    //        }
+    //    }
+    //}
 }

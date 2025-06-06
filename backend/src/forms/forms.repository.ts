@@ -5,7 +5,7 @@ import { CreateFormDto } from "./dtos/createForm.dto";
 import { CreateChoiceQuestion, CreateNumberQuestion, CreateTextQuestion } from "./dtos/createQuestion.dto";
 import { ChoiceAnswer, NumberAnswer, TextAnswer } from "./dtos/createAnswer.dto";
 import { CreateSubmissionDto } from "./dtos/createSubmission.dto";
-import { Form, Question, Prisma, QuestionType, Submission } from "../generated/prisma";
+import { Form, Prisma, QuestionType, Submission } from "../generated/prisma";
 import { PrismaService } from "../database/prisma.service";
 
 @injectable()

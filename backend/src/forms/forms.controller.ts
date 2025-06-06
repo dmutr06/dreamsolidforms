@@ -33,7 +33,7 @@ export class FormsController extends Controller {
 
     @get("/")
     @use(new AuthGuard())
-    async getForms(req: AuthedRequest, res: Response) {
+    async getForms(_req: AuthedRequest, res: Response) {
         const forms = await this.formsService.getAllForms();
         return res.json(forms);
     }
